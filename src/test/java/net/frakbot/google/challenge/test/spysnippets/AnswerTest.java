@@ -2,7 +2,9 @@ package net.frakbot.google.challenge.test.spysnippets;
 
 import net.frakbot.google.challenge.spysnippets.Answer;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,49 +14,53 @@ import java.util.List;
  * @author Francesco Pontillo
  */
 public class AnswerTest {
-    @Test(timeout = 1000)
+
+    @Rule
+    public Timeout globalTimeout= new Timeout(1000);
+
+    @Test
     public void testCase1() {
         Assert.assertEquals("google employees can program",
                             Answer.answer("many google employees can program", new String[]{"google", "program"}));
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testCase2() {
         Assert.assertEquals("c d a",
                             Answer.answer("a b c d a", new String[]{"a", "c", "d"}));
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testInverseOrder() {
         Assert.assertEquals("c d e",
                             Answer.answer("a b c d e f g", new String[]{"e", "d", "c"}));
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testMixedOrder() {
         Assert.assertEquals("a b c d e f",
                             Answer.answer("a b c d e f g", new String[]{"c", "f", "a"}));
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testSingle1() {
         Assert.assertEquals("a",
                             Answer.answer("a", new String[]{"a"}));
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testSingleInLots() {
         Assert.assertEquals("a",
                             Answer.answer("there is a lot of text in this sentence", new String[]{"a"}));
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testMultiple1() {
         Assert.assertEquals("lot of",
                             Answer.answer("there is of a lot of text in this sentence", new String[]{"of", "lot"}));
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testMultiple2() {
         Assert.assertEquals("program by google",
                             Answer.answer(
@@ -63,7 +69,7 @@ public class AnswerTest {
                             ));
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testShitload() {
         Assert.assertEquals("purus facilisis id quam vitae eleifend tristique ligula curabitur luctus sodales commodo vivamus tempus a lorem a viverra donec id dolor in sapien ornare blandit aenean porta lorem ut erat auctor sit amet",
                             Answer.answer(
@@ -80,50 +86,16 @@ public class AnswerTest {
                             ));
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testMultipleSame1() {
         Assert.assertEquals("program by the google",
                             Answer.answer(
                                     "many google employees cant program by in a program by the google in such a amazing awesome program",
                                     new String[]{"google", "program", "by"}
                             ));
-        /*
-        0-17
-        many google employees cant program by in a program by the google in such a amazing awesome program
-
-        google:1 l
-        program:17 r
-        by:?
-        a:?
-        - employees cant program by in a program by the google in such a amazing awesome -
-
-        google:1 l
-        program:17 r
-        by:5 l
-        a:14 r
-        SUM = 17-1 = 6
-        MIN = 1
-        - in a program by the google in such -
-
-        a: 7 l
-        google: 11
-        by:?
-        program:?
-        - program by the -
-
-        a: 7 l
-        google: 11
-        program:8
-        by:9
-        SUM = 11 - 7 = 6
-        MIN = 7
-        - -
-
-         */
-
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testMultipleSame2() {
         Assert.assertEquals("b | a x c d",
                             Answer.answer(
@@ -132,7 +104,7 @@ public class AnswerTest {
                             ));
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testMultipleSame3() {
         Assert.assertEquals("world there hello",
                             Answer.answer(
@@ -141,7 +113,7 @@ public class AnswerTest {
                             ));
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testMultipleSame4() {
         Assert.assertEquals("world hello",
                             Answer.answer(
@@ -150,7 +122,7 @@ public class AnswerTest {
                             ));
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testMultipleSame5() {
         Assert.assertEquals("world hello",
                             Answer.answer(
@@ -159,12 +131,7 @@ public class AnswerTest {
                             ));
     }
 
-    @Test(timeout = 1000)
-    public void testNull() {
-        Assert.assertEquals("", Answer.answer("a", new String[]{"b"}));
-    }
-
-    @Test(timeout = 1000)
+    @Test
     public void testLimitsNumbers() {
         StringBuilder sb = new StringBuilder();
         String[] all = new String[500];
@@ -254,7 +221,7 @@ public class AnswerTest {
             "vwnqywupum", "iuifeolbhq", "ypnpqqyzxa"
     };
 
-    @Test(timeout = 1000)
+    @Test
     public void testLimitsRandom() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < randomUnique.length; i++) {
@@ -267,7 +234,7 @@ public class AnswerTest {
         Assert.assertEquals(test, Answer.answer(test, randomUnique));
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testLimitsRandomInverted() {
         String[] inverted = new String[randomUnique.length];
         StringBuilder sb = new StringBuilder();
@@ -282,7 +249,7 @@ public class AnswerTest {
         Assert.assertEquals(test, Answer.answer(test, inverted));
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void testLimitsRandomRandomized() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < randomUnique.length; i++) {
@@ -295,35 +262,5 @@ public class AnswerTest {
         Collections.shuffle(shuffled);
         String test = sb.toString();
         Assert.assertEquals(test, Answer.answer(test, shuffled.toArray(new String[]{})));
-    }
-
-    @Test(timeout = 1000)
-    public void testLimitsRandomDuplicated() {
-        String[] search = new String[100];
-        String[] docTerms = new String[500];
-        for (int i = 0; i < 100; i++) {
-            search[i] = randomUnique[i];
-            for (int j = 0; j < 5; j++) {
-                docTerms[5 * i + j] = search[i];
-            }
-        }
-        List<String> shuffled = Arrays.asList(randomUnique);
-        List<String> doc = Arrays.asList(docTerms);
-        Collections.shuffle(shuffled);
-        StringBuilder docSb = new StringBuilder();
-        StringBuilder testSb = new StringBuilder();
-        for (int i = 0; i < doc.size(); i++) {
-            if (i < doc.size() - 4 && i > 3) {
-                testSb.append(doc.get(i));
-                if (i < doc.size() - 5) {
-                    testSb.append(" ");
-                }
-            }
-            docSb.append(doc.get(i));
-            if (i < doc.size() - 1) {
-                docSb.append(" ");
-            }
-        }
-        Assert.assertEquals(testSb.toString(), Answer.answer(docSb.toString(), shuffled.toArray(new String[]{})));
     }
 }

@@ -13,63 +13,121 @@ public class Answer {
     public static String answer(String document, String[] searchTerms) {
         String[] terms = pattern.split(document);
         HashSet<String> termSet = new HashSet<String>(Arrays.asList(searchTerms));
-        HashMap<String, List<Integer>> termMap = new HashMap<String, List<Integer>>(searchTerms.length);
-        double solutionsQty = 1;
+        List<Solution> solutions = new ArrayList<Solution>();
 
+        // loop over the document
         for (int i = 0; i < terms.length; i++) {
-            if (termSet.contains(terms[i])) {
-                List<Integer> positions = termMap.get(terms[i]);
-                if (positions == null) {
-                    positions = new ArrayList<Integer>();
+            String term = terms[i];
+            // if it's not a match, go on
+            if (!termSet.contains(term)) {
+                continue;
+            }
+            Match newMatch = new Match(term, i);
+            // for every other solution, add the match if it does not contain the term already
+            for (Solution solution : solutions) {
+                if (!solution.containsTerm(term)) {
+                    solution.addMatch(newMatch);
                 }
-                positions.add(i);
-                termMap.put(terms[i], positions);
-                int newPositionsCounts = positions.size();
-                if (newPositionsCounts > 1) {
-                    solutionsQty = solutionsQty / (newPositionsCounts - 1) * newPositionsCounts;
-                }
+            }
+            // if there are sufficient terms next in the document, add a new solution containing only term:pos
+            if (terms.length - i >= searchTerms.length) {
+                Solution baseSolution = new Solution(newMatch);
+                solutions.add(baseSolution);
             }
         }
 
-        int minLength = MAX_TERMS, min = terms.length, max = -1;
-        Set<String> keys = termMap.keySet();
-        for (double i = 0; i < solutionsQty; i++) {
-            int localMin = terms.length, localMax = -1, localLength = MAX_TERMS;
-            int prevCount = 1;
-            // for every term, add the proper values
-            for (String s : keys) {
-                List<Integer> positions = termMap.get(s);
-                int count = positions.size();
-                double split = (solutionsQty / count) / prevCount;
-                int termPos = positions.get((int) ((i / split) % count));
-                prevCount = prevCount * count;
-                if (termPos < localMin) {
-                    localMin = termPos;
-                }
-                if (termPos > localMax) {
-                    localMax = termPos;
-                }
-                // calc the temporary solution length, if it already passes the min one, avoid continuing
-                localLength = localMax - localMin;
-                if (localLength > minLength) {
-                    break;
-                }
-            }
-            if ((localLength < minLength) || (localLength == minLength && localMin < min)) {
-                minLength = localLength;
-                min = localMin;
-                max = localMax;
+        List<Solution> purgedSolutions = new ArrayList<Solution>();
+        for (Solution solution : solutions) {
+            if (solution.isComplete(searchTerms.length)) {
+                purgedSolutions.add(solution);
             }
         }
 
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int k = min; k <= max; k++) {
-            stringBuilder.append(terms[k]);
-            if (k + 1 <= max) {
-                stringBuilder.append(" ");
+        return Collections.min(purgedSolutions).getDocumentPortion(terms);
+    }
+
+    private static class Solution implements Comparable<Solution> {
+        private List<Match> matches;
+        private Set<String> termSet;
+
+        public Solution(Match match) {
+            this.matches = new ArrayList<Match>();
+            this.termSet = new HashSet<String>();
+            addMatch(match);
+        }
+
+        public boolean isComplete(int searchTermsQty) {
+            return (matches.size() == searchTermsQty);
+        }
+
+        public int getDistance() {
+            if (matches.size() <= 1) {
+                return MAX_TERMS;
+            }
+            Match min = Collections.min(matches);
+            Match max = Collections.max(matches);
+            return max.position - min.position;
+        }
+
+        public boolean containsTerm(String term) {
+            return this.termSet.contains(term);
+        }
+
+        public void addMatch(Match match) {
+            if (match != null) {
+                this.matches.add(match);
+                this.termSet.add(match.term);
             }
         }
 
-        return stringBuilder.toString();
+        public String getDocumentPortion(String[] terms) {
+            int minPos = matches.get(0).position;
+            int maxPos = matches.get(matches.size() - 1).position;
+            StringBuilder solutionBuilder = new StringBuilder();
+            for (int i = minPos; i <= maxPos; i++) {
+                solutionBuilder.append(terms[i]);
+                if (i < maxPos) {
+                    solutionBuilder.append(" ");
+                }
+            }
+            return solutionBuilder.toString();
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < matches.size(); i++) {
+                sb.append(matches.get(i).toString());
+                if (i < matches.size() - 1) {
+                    sb.append(" / ");
+                }
+            }
+            return sb.toString();
+        }
+
+        @Override
+        public int compareTo(Solution o) {
+            return Integer.compare(this.getDistance(), o.getDistance());
+        }
+    }
+
+    private static class Match implements Comparable<Match> {
+        private String term;
+        private int position;
+
+        public Match(String term, int position) {
+            this.term = term;
+            this.position = position;
+        }
+
+        @Override
+        public int compareTo(Match o) {
+            return Integer.compare(this.position, o.position);
+        }
+
+        @Override
+        public String toString() {
+            return term + ":" + position;
+        }
     }
 }
