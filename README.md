@@ -8,5 +8,6 @@ This is what comes next.
 * [X] Name that Rabbit
 * [X] Zombit Monitoring
 * [X] When it rains, it pours
-* [ ] Spy snippets
+* [X] Spy snippets
+* [X] String cleaning
 * [ ] ?
