@@ -40,19 +40,6 @@ public class AnswerTest {
 
     @Test
     public void testLols() {
-        List<String> lols = new ArrayList<String>(101);
-        for (Long time = 0L; time <= 100L; time++) {
-            Double value = Answer.calcValue(time);
-            lols.add(value.toString());
-            /*
-            if (time >= 2) {
-                Double value = Answer.calcValue(time);
-                lols.add(Double.toString(value - Answer.partials.get(time - 2)));
-            } else {
-                lols.add("0.0");
-            }
-            */
-        }
-        Map m = Answer.partials;
+        Answer.answer("1.0E25");
     }
 }
