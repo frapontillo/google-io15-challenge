@@ -38,14 +38,14 @@ public class AnswerTest {
     public void testHuuuuuuge() {
         // test and counter-test because we don't trust ourselves #ahahahahlol
         Assert.assertEquals("46562747725281304248321", Answer.answer("0.9E24"));
-        Assert.assertEquals(Double.parseDouble("0.9E24"), Answer.R(new BigInteger("46562747725281304248321")), 0);
+        Assert.assertEquals(new BigInteger("0.9E24"), Answer.R(new BigInteger("46562747725281304248321")));
     }
 
     @Test
     public void testHuuuge() {
         // test and counter-test because we don't trust ourselves #ahahahahlol
         Assert.assertEquals("425065432836037312250041", Answer.answer("8.54857545878E24"));
-        Assert.assertEquals(Double.parseDouble("8.54857545878E24"), Answer.R(new BigInteger("425065432836037312250041")), 0);
+        Assert.assertEquals(new BigInteger("8.54857545878E24"), Answer.R(new BigInteger("425065432836037312250041")));
     }
 
     @Test
@@ -56,26 +56,53 @@ public class AnswerTest {
         Assert.assertEquals(Answer.NONE, Answer.answer("lol"));
         Assert.assertEquals(Answer.NONE, Answer.answer(""));
         Assert.assertEquals(Answer.NONE, Answer.answer(null));
+        Assert.assertEquals(Answer.NONE, Answer.answer("10000000000000000000000001"));
+        Assert.assertEquals(Answer.NONE, Answer.answer("10E25"));
+        Assert.assertEquals(Answer.NONE, Answer.answer("0"));
+        Assert.assertEquals(Answer.NONE, Answer.answer("-"));
+        Assert.assertEquals(Answer.NONE, Answer.answer("-10000"));
     }
 
     @Test
     public void testAll() {
-        final int MAX = 200000;
-        Set<Double> handled = new HashSet<Double>();
+        final BigInteger FROM = BigInteger.valueOf(200000);
+        final BigInteger MAX = BigInteger.valueOf(400000);
+        Set<BigInteger> handled = new HashSet<>();
         // generate the first MAX values
-        for (int i = 0; i < MAX; i++) {
-            Answer.R(BigInteger.valueOf(i));
+        for (BigInteger i = FROM; i.compareTo(MAX) < 0; i = i.add(BigInteger.ONE)) {
+            Answer.R(i);
         }
         // visit the array in reverse and get answers for results we already know
-        for (int i = MAX - 1; i >= 0; i--) {
-            String expected = Integer.toString(i);
-            Double numberAnswer = Answer.partials.get(BigInteger.valueOf(i));
-            String answer = Answer.answer(String.format("%.0f", numberAnswer));
-            if (numberAnswer <= MAX && !handled.contains(numberAnswer)) {
+        for (BigInteger i = MAX.subtract(BigInteger.ONE); i.compareTo(FROM) >= 0; i = i.subtract(BigInteger.ONE)) {
+            String expected = i.toString();
+            BigInteger numberAnswer = Answer.partials.get(i);
+            String answer = Answer.answer(String.format("%s", numberAnswer));
+            if (!expected.equals(answer) && !handled.contains(numberAnswer) && numberAnswer.compareTo(MAX) <= 0) {
+                System.err.println(String.format("R(%s) expected was %s. Got %s.", i, expected, answer));
+            }
+            if (numberAnswer.compareTo(MAX) <= 0 && !handled.contains(numberAnswer)) {
                 Assert.assertEquals(expected, answer);
             }
             // add the answer to the set of answers so not to make any assertions on lower indexes
             handled.add(numberAnswer);
+        }
+    }
+
+    @Test
+    public void counterTest() {
+        final BigInteger FROM = BigInteger.valueOf(10000000);
+        final BigInteger MAX = BigInteger.valueOf(20000000);
+        for (BigInteger i = FROM; i.compareTo(MAX) < 0; i = i.add(BigInteger.ONE)) {
+            // get the x out of Rx
+            String x = Answer.answer(i.toString());
+            if (x.equals(Answer.NONE)) {
+                continue;
+            }
+            // use x to get Rx
+            BigInteger Rx = Answer.R(new BigInteger(x));
+            if (!i.equals(Rx)) {
+                System.err.println(String.format("R^(-1)(%s) = %s but R(%s) = %s.", i, x, x, Rx));
+            }
         }
     }
 }
