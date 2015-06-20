@@ -23,7 +23,9 @@ public class Answer {
     public static String answer(String str_S) {
         BigInteger zombits;
         try {
+            // parsing is achieved by BigInteger so we discard scientific notations even if numeric values are valid
             zombits = new BigInteger(str_S);
+            // discard values out of the range in the specs
             if (zombits.compareTo(BigInteger.TEN.pow(25)) > 0 || zombits.compareTo(BigInteger.ZERO) <= 0) {
                 return NONE;
             }
@@ -31,7 +33,7 @@ public class Answer {
             return NONE;
         }
 
-        // search for the result in both search spaces (odd and even)
+        // search for the result in both search spaces (odd and even) and take the maximum one
         BigInteger oddTime = getTimeExponential(zombits, false);
         BigInteger evenTime = getTimeExponential(zombits, true);
         BigInteger time = oddTime.max(evenTime);
@@ -69,9 +71,11 @@ public class Answer {
             if (value.equals(number)) {
                 return index;
             }
-            // if we passed the number we're searching for at the current index, reset the exponent and restart from a new value
+            // if we passed the number we're searching for at the current index
+            // reset the exponent and restart from a new value
             if (value.compareTo(number) > 0) {
-                // the new min will use the previous exponent and will be increased by the current min so we look for next items only
+                // the new min will use the previous exponent and will be increased by the current min
+                // so we look for next items only
                 min = base.pow(exp - 1).add(min);
                 // if this is the first loop AGAIN, exit, since we're in a range that can't be simplified anymore
                 if (exp == 1) {
@@ -79,7 +83,8 @@ public class Answer {
                 }
                 exp = 1;
             } else {
-                // increment the exponent so we search faster, better, harder, stronger (cit. https://www.youtube.com/watch?v=gAjR4_CbPpQ)
+                // increment the exponent so we search faster, better, harder, stronger
+                // (cit. https://www.youtube.com/watch?v=gAjR4_CbPpQ)
                 exp += 1;
             }
         } while (changed);
@@ -101,6 +106,7 @@ public class Answer {
     public static BigInteger R(BigInteger time) {
         if (partials.get(time) == null) {
             BigInteger value;
+            // apply the proper formula
             if (isEven(time)) {
                 value = R(time.divide(TWO))
                         .add(R(time.divide(TWO).add(BigInteger.ONE)))
@@ -110,6 +116,7 @@ public class Answer {
                         .add(R(time.subtract(BigInteger.ONE).divide(TWO)))
                         .add(BigInteger.ONE);
             }
+            // cache the value for further uses
             partials.put(time, value);
         }
         return partials.get(time);

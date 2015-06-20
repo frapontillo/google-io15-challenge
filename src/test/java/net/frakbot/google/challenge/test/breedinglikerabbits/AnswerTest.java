@@ -35,20 +35,6 @@ public class AnswerTest {
     }
 
     @Test
-    public void testHuuuuuuge() {
-        // test and counter-test because we don't trust ourselves #ahahahahlol
-        Assert.assertEquals("46562747725281304248321", Answer.answer("0.9E24"));
-        Assert.assertEquals(new BigInteger("0.9E24"), Answer.R(new BigInteger("46562747725281304248321")));
-    }
-
-    @Test
-    public void testHuuuge() {
-        // test and counter-test because we don't trust ourselves #ahahahahlol
-        Assert.assertEquals("425065432836037312250041", Answer.answer("8.54857545878E24"));
-        Assert.assertEquals(new BigInteger("8.54857545878E24"), Answer.R(new BigInteger("425065432836037312250041")));
-    }
-
-    @Test
     public void testWat() {
         Assert.assertEquals(Answer.NONE, Answer.answer("-1"));
         Assert.assertEquals(Answer.NONE, Answer.answer("8."));
@@ -65,8 +51,8 @@ public class AnswerTest {
 
     @Test
     public void testAll() {
-        final BigInteger FROM = BigInteger.valueOf(200000);
-        final BigInteger MAX = BigInteger.valueOf(400000);
+        final BigInteger FROM = BigInteger.valueOf(0);
+        final BigInteger MAX = BigInteger.valueOf(40000);
         Set<BigInteger> handled = new HashSet<>();
         // generate the first MAX values
         for (BigInteger i = FROM; i.compareTo(MAX) < 0; i = i.add(BigInteger.ONE)) {
@@ -88,10 +74,14 @@ public class AnswerTest {
         }
     }
 
+    /**
+     * Huge method to test and counter test values.
+     * NOTE: this is insanely expensive for higher indexes/values.
+     */
     @Test
     public void counterTest() {
-        final BigInteger FROM = BigInteger.valueOf(10000000);
-        final BigInteger MAX = BigInteger.valueOf(20000000);
+        final BigInteger FROM = BigInteger.valueOf(1);
+        final BigInteger MAX = BigInteger.valueOf(100000);
         for (BigInteger i = FROM; i.compareTo(MAX) < 0; i = i.add(BigInteger.ONE)) {
             // get the x out of Rx
             String x = Answer.answer(i.toString());
