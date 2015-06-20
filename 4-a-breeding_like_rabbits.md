@@ -5,11 +5,11 @@ As usual, the zombie rabbits (zombits) are breeding... like rabbits! But instead
 like all good rabbits do, the zombit population changes according to this bizarre formula, where R(n) is the number of 
 zombits at time n:
 
-R(0) = 1
-R(1) = 1
-R(2) = 2
-R(2n) = R(n) + R(n + 1) + n (for n > 1)
-R(2n + 1) = R(n - 1) + R(n) + 1 (for n >= 1)
+- R(0) = 1
+- R(1) = 1
+- R(2) = 2
+- R(2n) = R(n) + R(n + 1) + n (for n > 1)
+- R(2n + 1) = R(n 1) + R(n) + 1 (for n >= 1)
 
 (At time 2, we realized the difficulty of a breeding program with only one zombit and so added an additional zombit.)
 
@@ -28,20 +28,23 @@ Languages
 =========
 
 To provide a Python solution, edit solution.py
+
 To provide a Java solution, edit solution.java
 
 Test cases
 ==========
 
-Inputs:
-    (string) str_S = "7"
-Output:
-    (string) "4"
+- Inputs:
+	- (string) str_S = "7"
+- Output:
+	- (string) "4"
 
-Inputs:
-    (string) str_S = "100"
-Output:
-    (string) "None"
+
+- Inputs:
+	- (string) str_S = "100"
+- Output:
+	- (string) "None"
+    
 
 Use verify [file] to test your solution and see how it does. When you are finished editing your code, use submit [file] 
 to submit your answer. If your solution passes the test cases, it will be removed from your home folder.
