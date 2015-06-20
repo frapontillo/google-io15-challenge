@@ -76,16 +76,17 @@ public class Answer {
                 }
                 exp = 1;
             } else {
-                // increment the exponent so we search faster
+                // increment the exponent so we search faster, better, harder, stronger (cit. https://www.youtube.com/watch?v=gAjR4_CbPpQ)
                 exp += 1;
             }
-
         } while (changed);
+
         // at this point the min value is the only candidate index whose R value can be equal to the number
         Double value = R(min);
         if (number.equals(value)) {
             return min;
         }
+
         return BigInteger.valueOf(-1);
     }
 
@@ -110,87 +111,4 @@ public class Answer {
     private static boolean isEven(BigInteger value) {
         return value.mod(TWO).equals(BigInteger.ZERO);
     }
-
-    /*
-
-    private static final int MAX_POINTS = 100;
-
-    long[] oddX = new long[MAX_POINTS];
-    long[] evenX = new long[MAX_POINTS];
-    double[] oddY = new double[MAX_POINTS];
-    double[] evenY = new double[MAX_POINTS];
-
-    // build the first n = MAX_POINTS*2 values (avoid 0, 1, 2 as they may bias the approximation)
-    for (int i = 3; i < (MAX_POINTS * 2) + 3; i++) {
-        if (i % 2 == 1) {
-            oddX[(i-3)/2] = i;
-            oddY[(i-3)/2] = getValue(i);
-        } else {
-            evenX[(i-4)/2] = i;
-            evenY[(i-3)/2] = getValue(i);
-        }
-    }
-
-    double[][] coefficients = getCoefficients(oddX, oddY, evenX, evenY);
-    double[] oddDifferences = coefficients[0];
-    double[] evenDifferences = coefficients[1];
-
-    // use Neville's differences algorithm to find the polynomials coefficients
-    // (see https://en.wikipedia.org/wiki/Neville%27s_algorithm)
-    private static double[][] getCoefficients(long[] oddX, double[] oddY, long[] evenX, double[] evenY) {
-        double[] oddDifferences = oddY.clone();
-        double[] evenDifferences = evenY.clone();
-        for (int col = 1; col < MAX_POINTS; col++) {
-            // for each loop, calculate all the differences
-            for (int row = MAX_POINTS - 1; row > 0; row--) {
-                if(row >= col) {
-                    oddDifferences[row] = (oddDifferences[row] - oddDifferences[row - 1]) / (oddX[row] - oddX[row - col]);
-                    evenDifferences[row] = (evenDifferences[row] - evenDifferences[row - 1]) / (evenX[row] - evenX[row - col]);
-                }
-            }
-        }
-        return new double[][] {oddDifferences, evenDifferences};
-    }
-
-    public static Double getSolutionForTime(long time, long[] x, double[] coefficients) {
-        double solution = 0D;
-        for (int i = 0; i < MAX_POINTS; i++) {
-            Double term = coefficients[i];
-            for (int j = 0; j < i; j++) {
-                if (term == 0) {
-                    break;
-                }
-                term *= (time - x[j]);
-            }
-            solution += term;
-        }
-        return solution;
-    }
-
-    private static BigInteger getTimeBisection(Double number, BigInteger min, BigInteger max) {
-        BigInteger medium = max.subtract(min).divide(TWO).add(min);
-        Double mediumValue = R(medium);
-        if (mediumValue.equals(number)) {
-            return medium;
-        }
-        if (number < mediumValue) {
-            return getTimeBisection(number, min, medium);
-        }
-        return getTimeBisection(number, medium, max);
-    }
-
-    private static BigInteger getTimeLinear(Double number, BigInteger min, BigInteger max) {
-        // while min <= max, calculate min and check for number, then increment it
-        for (; min.compareTo(max) <= 0; min = min.add(TWO)) {
-            Double value = R(min);
-            // if the number equals the current value at min, return min
-            if (number.equals(value)) {
-                return min;
-            }
-        }
-        return BigInteger.valueOf(-1);
-    }
-
-    */
-
 }

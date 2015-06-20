@@ -16,6 +16,7 @@ public class AnswerTest {
     public void testBases() {
         Assert.assertEquals("1", Answer.answer("1"));
         Assert.assertEquals("2", Answer.answer("2"));
+        Assert.assertEquals("3", Answer.answer("3"));
     }
 
     @Test
@@ -65,14 +66,15 @@ public class AnswerTest {
         for (int i = 0; i < MAX; i++) {
             Answer.R(BigInteger.valueOf(i));
         }
-        // visit the array in reverse and generate the values
+        // visit the array in reverse and get answers for results we already know
         for (int i = MAX - 1; i >= 0; i--) {
             String expected = Integer.toString(i);
             Double numberAnswer = Answer.partials.get(BigInteger.valueOf(i));
             String answer = Answer.answer(String.format("%.0f", numberAnswer));
-            if (!expected.equals(answer) && numberAnswer <= MAX && !handled.contains(numberAnswer)) {
-                System.err.println(String.format("%s does not match the calculated %s", expected, answer));
+            if (numberAnswer <= MAX && !handled.contains(numberAnswer)) {
+                Assert.assertEquals(expected, answer);
             }
+            // add the answer to the set of answers so not to make any assertions on lower indexes
             handled.add(numberAnswer);
         }
     }
