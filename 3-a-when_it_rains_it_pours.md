@@ -7,21 +7,24 @@ Specifically, suppose there is a line of hutches, stacked to various heights and
 
 For example, suppose the heights of the stacked hutches are [1,4,2,5,1,2,3] (the hutches are shown below):
 
-...X...
-.X.X...
-.X.X..X
-.XXX.XX
-XXXXXXX
-1425123
+| 1 | 4 | 2 | 5 | 1 | 2 | 3 |
+| - | - | - | - | - | - | - |
+| . | . | . | X | . | . | . |
+| . | X | . | X | . | . | . | 
+| . | X | . | X | . | . | X |
+| . | X | X | X | . | X | X |
+| X | X | X | X | X | X | X |
+
 
 When water is poured over the top at all places and allowed to runoff, it will remain trapped at the 'O' locations:
 
-...X...
-.XOX...
-.XOXOOX
-.XXXOXX
-XXXXXXX
-1425123
+| 1 | 4 | 2 | 5 | 1 | 2 | 3 |
+| - | - | - | - | - | - | - |
+| . | . | . | X | . | . | . |
+| . | X | 0 | X | . | . | . | 
+| . | X | 0 | X | 0 | 0 | X |
+| . | X | X | X | 0 | X | X |
+| X | X | X | X | X | X | X |
 
 The amount of water that has accumulated is the number of Os, which, in this instance, is 5.
 
